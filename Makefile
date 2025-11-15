@@ -2,6 +2,7 @@ NAME=ThaiPlusPlus
 
 CC=clang
 CXX=clang++
+SHELL=cmd.exe
 
 LIBS=
 
@@ -19,11 +20,11 @@ all: $(OBJS)
 	$(CXX) $^ -o $(NAME).exe $(LIBFLAGS) $(INCLUDE_FLAGS)
 
 build/%.o: %.c
-	mkdir "$(dir $@)"
+	if not exist "$(dir $@)" mkdir "$(dir $@)"
 	$(CC) -c $< -o $@
 
 build/%.o: %.cpp
-	mkdir "$(dir $@)"
+	if not exist "$(dir $@)" mkdir "$(dir $@)"
 	$(CXX) -c $< -o $@
 
 clean:
