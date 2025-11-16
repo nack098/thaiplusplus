@@ -1,0 +1,14 @@
+[
+ {
+  "directory": "D:\\Nack_Files\\works\\Programming Projects\\thaiplusplus",
+  "arguments": [
+   "clang",
+   "-c",
+   "src/main.c",
+   "-o",
+   "build/src/main.o",
+   "-Iinclude/"
+  ],
+  "file": "src/main.c"
+ }
+]

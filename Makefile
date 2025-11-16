@@ -21,11 +21,11 @@ all: $(OBJS)
 
 build/%.o: %.c
 	if not exist "$(dir $@)" mkdir "$(dir $@)"
-	$(CC) -c $< -o $@
+	$(CC) -c $< -o $@ $(LIBFLAGS) $(INCLUDE_FLAGS)
 
 build/%.o: %.cpp
 	if not exist "$(dir $@)" mkdir "$(dir $@)"
-	$(CXX) -c $< -o $@
+	$(CXX) -c $< -o $@ $(LIBFLAGS) $(INCLUDE_FLAGS)
 
 clean:
 	rm -rf $(NAME).exe build/
