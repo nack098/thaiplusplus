@@ -1,5 +1,7 @@
 #include "token.h"
 
+#include <stddef.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -106,6 +108,8 @@ EOperator is_operator(char *buf)
 {
     if (strcmp(buf, "คืนค่า") == 0)
         return O_RETURN;
+    else if (strcmp(buf, "ไม่คืนค่า") == 0)
+        return O_NO_RETURN;
     else if (strcmp(buf, "ประเภท") == 0)
         return O_CLASS_DECLARATION;
     else if (strcmp(buf, "ใช้ภายใน") == 0)
@@ -140,6 +144,20 @@ EOperator is_operator(char *buf)
         return O_IF;
     else if (strcmp(buf, "แล้ว") == 0)
         return O_ELSE;
+    else if (strcmp(buf, "บวก") == 0)
+        return O_SUM;
+    else if (strcmp(buf, "ลบ") == 0)
+        return O_DIFF;
+    else if (strcmp(buf, "คูณ") == 0)
+        return O_MUL;
+    else if (strcmp(buf, "หาร") == 0)
+        return O_DIV;
+    else if (strcmp(buf, "เมื่อ") == 0)
+        return O_WHILE;
+    else if (strcmp(buf, "จาก") == 0)
+        return O_FOR;
+    else if (strcmp(buf, "ทำ") == 0)
+        return O_DO;
 
     return O_UNKNOWN;
 }
@@ -190,19 +208,20 @@ TokenNode *tokenize_buf(char *buf, size_t len)
 
 Token *tokenizer(FILE *file)
 {
-    Token  *token       =   token_create();
-    char    c           =   0;
-    size_t  count       =   0;
-    char   *buf         =   NULL;
-    size_t  buf_size    =   sizeof(char) * PARSER_BUFFER_SIZE;
+    Token      *token       =   token_create();
+    char        c           =   0;
+    size_t      count       =   0;
+    char       *buf         =   NULL;
+    size_t      buf_size    =   sizeof(char) * PARSER_BUFFER_SIZE;
 
     buf     =   malloc(buf_size);
-    
+
     while ((c = fgetc(file)) != EOF)
     {
         if (count >= buf_size) break;
+        if (c == '\r') continue;
 
-        if (c == ' ' || c == '\n')
+        if (c == ' ' || c == '\n' || c == '\t')
         {
             if (count == 0) continue;
             
@@ -275,6 +294,9 @@ void print_token(Token *token)
                     case O_RETURN:
                         printf("(RETURN)");
                         break;
+                    case O_NO_RETURN:
+                        printf("(NO_RETURN)");
+                        break;
                     case O_CLASS_DECLARATION:
                         printf("(CLASS)");
                         break;
@@ -326,13 +348,34 @@ void print_token(Token *token)
                     case O_ELSE:
                         printf("(ELSE)");
                         break;
+                    case O_SUM:
+                        printf("(SUM)");
+                        break;
+                    case O_DIFF:
+                        printf("(DIFF)");
+                        break;
+                    case O_MUL:
+                        printf("(MUL)");
+                        break;
+                    case O_DIV:
+                        printf("(DIV)");
+                        break;
+                    case O_DO:
+                        printf("(DO)");
+                        break;
+                    case O_WHILE:
+                        printf("(WHILE)");
+                        break;
+                    case O_FOR:
+                        printf("(FOR)");
+                        break;
                     case O_UNKNOWN:
                         printf("(UKNOWN)");
                         break;
                 }
                 break;
             case T_UNKNOWN:
-                printf("UNKNOWN");
+                printf("UNKNOWN(%s)", current->data.value);
                 break;
         }
 

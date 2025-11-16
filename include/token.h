@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdint.h>
 #include <stdio.h>
 #define PARSER_BUFFER_SIZE 256
 
@@ -40,6 +41,7 @@ typedef enum
 {
     O_CLASS_DECLARATION,
     O_RETURN,
+    O_NO_RETURN,
     O_PRIVATE,
     O_PUBLIC,
     O_FROM,
@@ -56,6 +58,13 @@ typedef enum
     O_GREATER_OR_EQUAL,
     O_IF,
     O_ELSE,
+    O_SUM,
+    O_DIFF,
+    O_MUL,
+    O_DIV,
+    O_DO,
+    O_WHILE,
+    O_FOR,
     O_UNKNOWN,
 } EOperator;
 
