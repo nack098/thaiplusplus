@@ -7,15 +7,15 @@
 
 TokenNode *token_node_create()
 {
-    TokenNode *node     =   NULL;
-    node                =   (TokenNode *)malloc(sizeof(*node));
+    TokenNode *node = NULL;
+    node = (TokenNode *) malloc(sizeof(*node));
     if (node == NULL)
     {
         goto exit;
     }
-    node->data.value    =   NULL;
-    node->next          =   NULL;
-    node->type          =   T_UNKNOWN;
+    node->data.value = NULL;
+    node->next = NULL;
+    node->type = T_UNKNOWN;
 
 exit:
     return node;
@@ -23,14 +23,14 @@ exit:
 
 Token *token_create()
 {
-    Token *token    =   NULL;
-    token           =   (Token *)malloc(sizeof(*token));
+    Token *token = NULL;
+    token = (Token *) malloc(sizeof(*token));
     if (token == NULL)
     {
         goto exit;
     }
 
-    TokenNode *node =   token_node_create();
+    TokenNode *node = token_node_create();
     if (node == NULL)
     {
         free(token);
@@ -48,27 +48,30 @@ exit:
 
 void token_free(Token **token)
 {
-    Token       *list;
-    TokenNode   *current, *next;
+    Token *list;
+    TokenNode *current, *next;
 
-    if (token == NULL || *token == NULL) goto exit;
+    if (token == NULL || *token == NULL)
+        goto exit;
 
-    list    =   *token;
-    current =   list->head->next;
+    list = *token;
+    current = list->head->next;
 
     while (current != NULL)
     {
-        next    =   current->next;
+        next = current->next;
 
         if (current->type == T_UNKNOWN && current->data.value != NULL)
             free(current->data.value);
 
         free(current);
-        current =   next;
+        current = next;
     }
 
     free(list->head);
     free(list);
+
+    token = NULL;
 
 exit:
     return;
@@ -76,10 +79,11 @@ exit:
 
 void token_append_node(Token *token, TokenNode *node)
 {
-    if (node == NULL) return;
-    TokenNode *tmp      =   token->last;
-    tmp->next           =   node;
-    token->last         =   node;
+    if (node == NULL)
+        return;
+    TokenNode *tmp = token->last;
+    tmp->next = node;
+    token->last = node;
 
     ++token->size;
 }
@@ -164,13 +168,13 @@ EOperator is_operator(char *buf)
 
 TokenNode *tokenize_buf(char *buf, size_t len)
 {
-    char      *cpy  =   malloc(sizeof(char) * len + 1);
-    TokenNode *node =   token_node_create();
-    size_t     i    =   0;
+    char *cpy = malloc(sizeof(char) * len + 1);
+    TokenNode *node = token_node_create();
+    size_t i = 0;
 
-    EFunctionType   f_type;
-    EType           t_type;
-    EOperator       o_type;
+    EFunctionType f_type;
+    EType t_type;
+    EOperator o_type;
 
     for (i = 0; i < len; ++i)
         cpy[i] = buf[i];
@@ -208,23 +212,26 @@ TokenNode *tokenize_buf(char *buf, size_t len)
 
 Token *tokenizer(FILE *file)
 {
-    Token      *token       =   token_create();
-    char        c           =   0;
-    size_t      count       =   0;
-    char       *buf         =   NULL;
-    size_t      buf_size    =   sizeof(char) * PARSER_BUFFER_SIZE;
+    Token *token = token_create();
+    char c = 0;
+    size_t count = 0;
+    char *buf = NULL;
+    size_t buf_size = sizeof(char) * PARSER_BUFFER_SIZE;
 
-    buf     =   malloc(buf_size);
+    buf = malloc(buf_size);
 
     while ((c = fgetc(file)) != EOF)
     {
-        if (count >= buf_size) break;
-        if (c == '\r') continue;
+        if (count >= buf_size)
+            break;
+        if (c == '\r')
+            continue;
 
         if (c == ' ' || c == '\n' || c == '\t')
         {
-            if (count == 0) continue;
-            
+            if (count == 0)
+                continue;
+
             buf[count] = '\0';
             TokenNode *node = tokenize_buf(buf, count);
             token_append_node(token, node);
@@ -248,138 +255,144 @@ Token *tokenizer(FILE *file)
     return token;
 }
 
+void print_token_node(TokenNode *token)
+{
+    switch (token->type)
+    {
+    case T_TYPE:
+        printf("TYPE");
+        switch (token->data.t_type)
+        {
+        case TT_INT:
+            printf("(INT)");
+            break;
+        case TT_FLOAT:
+            printf("(FLOAT)");
+            break;
+        case TT_UNKNOWN:
+            printf("(UKNOWN)");
+            break;
+        }
+        break;
+    case T_FUNC:
+        printf("FUNC");
+        switch (token->data.f_type)
+        {
+        case F_PARAM:
+            printf("(PARAM)");
+            break;
+        case F_NO_PARAM:
+            printf("(NOPARAM)");
+            break;
+        case F_UNKNOWN:
+            printf("(UNKNOWN)");
+            break;
+        }
+        break;
+    case T_OPT:
+        printf("OPT");
+        switch (token->data.o_type)
+        {
+        case O_RETURN:
+            printf("(RETURN)");
+            break;
+        case O_NO_RETURN:
+            printf("(NO_RETURN)");
+            break;
+        case O_CLASS_DECLARATION:
+            printf("(CLASS)");
+            break;
+        case O_PRIVATE:
+            printf("(PRIVATE)");
+            break;
+        case O_PUBLIC:
+            printf("(PUBLIC)");
+            break;
+        case O_INHERIT:
+            printf("(INHERIT)");
+            break;
+        case O_FROM:
+            printf("(FROM)");
+            break;
+        case O_CALL:
+            printf("(CALL)");
+            break;
+        case O_INCLUDE:
+            printf("(INCLUDE)");
+            break;
+        case O_IS:
+            printf("(INCLUDE)");
+            break;
+        case O_EQUAL:
+            printf("(EQUAL)");
+            break;
+        case O_GREATER:
+            printf("(GREATER)");
+            break;
+        case O_GREATER_OR_EQUAL:
+            printf("(GREATER_OR_EQUAL)");
+            break;
+        case O_LESS:
+            printf("(LESS)");
+            break;
+        case O_LESS_OR_EQUAL:
+            printf("(LESS_OR_EQUAL)");
+            break;
+        case O_NOT:
+            printf("(NOT)");
+            break;
+        case O_EXT_LANG:
+            printf("(EXT_LANG)");
+            break;
+        case O_IF:
+            printf("(IF)");
+            break;
+        case O_ELSE:
+            printf("(ELSE)");
+            break;
+        case O_SUM:
+            printf("(SUM)");
+            break;
+        case O_DIFF:
+            printf("(DIFF)");
+            break;
+        case O_MUL:
+            printf("(MUL)");
+            break;
+        case O_DIV:
+            printf("(DIV)");
+            break;
+        case O_DO:
+            printf("(DO)");
+            break;
+        case O_WHILE:
+            printf("(WHILE)");
+            break;
+        case O_FOR:
+            printf("(FOR)");
+            break;
+        case O_UNKNOWN:
+            printf("(UKNOWN)");
+            break;
+        }
+        break;
+    case T_UNKNOWN:
+        printf("UNKNOWN(%s)", token->data.value);
+        break;
+    }
+}
+
 void print_token(Token *token)
 {
-    if (token == NULL || token->head == NULL) return;
+    if (token == NULL || token->head == NULL)
+        return;
 
     TokenNode *current = token->head->next;
     while (current != NULL)
     {
-        switch (current->type)
-        {
-            case T_TYPE:
-                printf("TYPE");
-                switch (current->data.t_type)
-                {
-                    case TT_INT:
-                        printf("(INT)");
-                        break;
-                    case TT_FLOAT:
-                        printf("(FLOAT)");
-                        break;
-                    case TT_UNKNOWN:
-                        printf("(UKNOWN)");
-                        break;
-                }
-                break;
-            case T_FUNC:
-                printf("FUNC");
-                switch (current->data.f_type)
-                {
-                    case F_PARAM:
-                        printf("(PARAM)");
-                        break;
-                    case F_NO_PARAM:
-                        printf("(NOPARAM)");
-                        break;
-                    case F_UNKNOWN:
-                        printf("(UNKNOWN)");
-                        break;
-                }
-                break;
-            case T_OPT:
-                printf("OPT");
-                switch (current->data.o_type)
-                {
-                    case O_RETURN:
-                        printf("(RETURN)");
-                        break;
-                    case O_NO_RETURN:
-                        printf("(NO_RETURN)");
-                        break;
-                    case O_CLASS_DECLARATION:
-                        printf("(CLASS)");
-                        break;
-                    case O_PRIVATE:
-                        printf("(PRIVATE)");
-                        break;
-                    case O_PUBLIC:
-                        printf("(PUBLIC)");
-                        break;
-                    case O_INHERIT:
-                        printf("(INHERIT)");
-                        break;
-                    case O_FROM:
-                        printf("(FROM)");
-                        break;
-                    case O_CALL:
-                        printf("(CALL)");
-                        break;
-                    case O_INCLUDE:
-                        printf("(INCLUDE)");
-                        break;
-                    case O_IS:
-                        printf("(INCLUDE)");
-                        break;
-                    case O_EQUAL:
-                        printf("(EQUAL)");
-                        break;
-                    case O_GREATER:
-                        printf("(GREATER)");
-                        break;
-                    case O_GREATER_OR_EQUAL:
-                        printf("(GREATER_OR_EQUAL)");
-                        break;
-                    case O_LESS:
-                        printf("(LESS)");
-                        break;
-                    case O_LESS_OR_EQUAL:
-                        printf("(LESS_OR_EQUAL)");
-                        break;
-                    case O_NOT:
-                        printf("(NOT)");
-                        break;
-                    case O_EXT_LANG:
-                        printf("(EXT_LANG)");
-                        break;
-                    case O_IF:
-                        printf("(IF)");
-                        break;
-                    case O_ELSE:
-                        printf("(ELSE)");
-                        break;
-                    case O_SUM:
-                        printf("(SUM)");
-                        break;
-                    case O_DIFF:
-                        printf("(DIFF)");
-                        break;
-                    case O_MUL:
-                        printf("(MUL)");
-                        break;
-                    case O_DIV:
-                        printf("(DIV)");
-                        break;
-                    case O_DO:
-                        printf("(DO)");
-                        break;
-                    case O_WHILE:
-                        printf("(WHILE)");
-                        break;
-                    case O_FOR:
-                        printf("(FOR)");
-                        break;
-                    case O_UNKNOWN:
-                        printf("(UKNOWN)");
-                        break;
-                }
-                break;
-            case T_UNKNOWN:
-                printf("UNKNOWN(%s)", current->data.value);
-                break;
-        }
-
+        print_token_node(current);
         putchar(' ');
         current = current->next;
     }
+    putchar('\n');
 }

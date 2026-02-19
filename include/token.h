@@ -5,15 +5,16 @@
 #define PARSER_BUFFER_SIZE 256
 
 typedef struct TokenNode TokenNode;
-TokenNode  *token_node_create();
+TokenNode *token_node_create();
 
 typedef struct Token Token;
-Token      *token_create();
-void        token_append_node(Token*, TokenNode*);
-void        token_free(Token**);
+Token *token_create();
+void token_append_node(Token *, TokenNode *);
+void token_free(Token **);
 
-Token      *tokenizer(FILE*);
-void        print_token(Token*);
+Token *tokenizer(FILE *);
+void print_token(Token *);
+void print_token_node(TokenNode *);
 
 typedef enum
 {
@@ -23,7 +24,7 @@ typedef enum
     T_UNKNOWN
 } ETokenType;
 
-typedef enum 
+typedef enum
 {
     F_PARAM,
     F_NO_PARAM,
@@ -70,20 +71,20 @@ typedef enum
 
 struct Token
 {
-    TokenNode  *head;
-    TokenNode  *last;
-    size_t      size;
+    TokenNode *head;
+    TokenNode *last;
+    size_t size;
 };
 
 struct TokenNode
 {
-    struct TokenNode   *next;
-    ETokenType          type;
+    struct TokenNode *next;
+    ETokenType type;
     union
     {
-        EFunctionType       f_type;
-        EType               t_type;
-        EOperator           o_type;
-        char               *value;
-    }                   data;
+        EFunctionType f_type;
+        EType t_type;
+        EOperator o_type;
+        char *value;
+    } data;
 };
